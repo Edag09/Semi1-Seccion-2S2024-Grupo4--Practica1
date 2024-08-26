@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
-import backend.server_py.users as users
+import users as users
 
 app = Flask(__name__)
 
@@ -19,7 +19,7 @@ def create_user():
             return jsonify({"error": f"El campo '{field}' es requerido."}), 400
 
     # Procesar los datos (aquí simplemente los imprimimos)
-    users.insertuser(required_fields)
+    users.insertuser(data)
 
     # Suponiendo que en esta parte insertas el usuario en una base de datos
 
@@ -43,7 +43,7 @@ def login():
             return jsonify({"error": f"El campo '{field}' es requerido."}), 400
 
     # Procesar los datos (aquí simplemente los imprimimos)
-    result = users.loginuser(required_fields)
+    result = users.loginuser(data)
 
     # Retornar una respuesta exitosa
     return jsonify({
@@ -66,7 +66,7 @@ def update_user():
             return jsonify({"error": f"El campo '{field}' es requerido."}), 400
 
     # Procesar los datos (aquí simplemente los imprimimos)
-    users.updateuser(required_fields)
+    users.updateuser(data)
 
     # Retornar una respuesta exitosa
     return jsonify({
@@ -81,14 +81,14 @@ def delete_user():
     data = request.get_json()
 
     # Validar que todos los campos están presentes
-    required_fields = ['id']
+    required_fields = ['correo_electronico']
     
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"El campo '{field}' es requerido."}), 400
 
     # Procesar los datos (aquí simplemente los imprimimos)
-    users.deleteuser(required_fields)
+    users.deleteuser(data)
 
     # Retornar una respuesta exitosa
     return jsonify({
