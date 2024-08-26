@@ -29,7 +29,27 @@ def create_user():
         "data": data
     }), 201
 
+## Ruta para iniciar sesión
+@app.route('/login', methods=['POST'])
+def login():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
 
+    # Validar que todos los campos están presentes
+    required_fields = ['correo_electronico', 'contrasena']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    result = connectbd.loginuser(required_fields)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Inicio de sesión exitoso",
+        "data": result
+    }), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

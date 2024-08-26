@@ -43,3 +43,16 @@ def insertuser(data):
         print("Error al insertar usuario en MySQL", e)
         return None
     
+def loginuser(data):
+    global connect
+    conectar()
+    try:
+        cursor = connect.cursor()
+        sql = "SELECT * FROM usuarios WHERE correo_electronico = %s AND contrasena = %s"
+        cursor.execute(sql, data)
+        result = cursor.fetchone()
+        connect.close()
+        return result
+    except Error as e:
+        print("Error al buscar usuario en MySQL", e)
+        return None
