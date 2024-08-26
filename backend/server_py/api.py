@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
-import connectbd
+import backend.server_py.users as users
 
 app = Flask(__name__)
 
@@ -19,7 +19,7 @@ def create_user():
             return jsonify({"error": f"El campo '{field}' es requerido."}), 400
 
     # Procesar los datos (aquí simplemente los imprimimos)
-    connectbd.insertuser(required_fields)
+    users.insertuser(required_fields)
 
     # Suponiendo que en esta parte insertas el usuario en una base de datos
 
@@ -43,12 +43,57 @@ def login():
             return jsonify({"error": f"El campo '{field}' es requerido."}), 400
 
     # Procesar los datos (aquí simplemente los imprimimos)
-    result = connectbd.loginuser(required_fields)
+    result = users.loginuser(required_fields)
 
     # Retornar una respuesta exitosa
     return jsonify({
         "message": "Inicio de sesión exitoso",
         "data": result
+    }), 200
+
+## Ruta para actualizar un usuario
+@app.route('/updateuser', methods=['PUT'])
+def update_user():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['nombres', 'apellidos', 'foto_url', 'correo_electronico', 'contrasena', 
+                       'fecha_nacimiento', 'rol', 'fecha_creacion']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    users.updateuser(required_fields)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Usuario actualizado exitosamente",
+        "data": data
+    }), 200
+
+## Ruta para eliminar un usuario
+@app.route('/deleteuser', methods=['DELETE'])
+def delete_user():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['id']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    users.deleteuser(required_fields)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Usuario eliminado exitosamente",
+        "data": data
     }), 200
 
 if __name__ == "__main__":
