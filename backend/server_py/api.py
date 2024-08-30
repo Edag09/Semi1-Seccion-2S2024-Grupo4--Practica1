@@ -187,5 +187,71 @@ def search_song():
         "data": result
     }), 200
 
+## Ruta para insertar una canción en favoritos
+@app.route('/addfavorite', methods=['POST'])
+def add_favorite():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['nombres', 'nombre']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    songs.insertfavoritesong(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Canción añadida a favoritos exitosamente",
+        "data": data
+    }),
+
+## Ruta para eliminar una canción de favoritos
+@app.route('/deletefavorite', methods=['DELETE'])
+def delete_favorite():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['nombres', 'nombre']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    songs.deletefavoritesong(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Canción eliminada de favoritos exitosamente",
+        "data": data
+    }), 200
+
+## Ruta para Listar todas las canciones de la playlist de favoritos de un usuario
+@app.route('/favorite', methods=['GET'])
+def list_favorite():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['nombres']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    result = songs.listfavoritesongs(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Canciones de favoritos listadas exitosamente",
+        "data": result
+    }), 200
+
 if __name__ == "__main__":
     app.run(debug=True)

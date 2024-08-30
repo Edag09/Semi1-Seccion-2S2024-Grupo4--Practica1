@@ -120,3 +120,94 @@ def searchsong(data):
         if connect.is_connected():
             connect.close()
             cursor.close()
+
+### Para la playlist de Favoritos 
+
+## Instertar una canción en la playlist de favoritos
+def insertfavoritesong(data):
+
+    connect = conection.conectar()
+    
+    try:
+        cursor = connect.cursor()
+
+        sql = "INSERT INTO favoritos (usuario_id, cancion_id, fecha_agregada) VALUES ( (SELECT id FROM usuarios WHERE nombres = %s), (SELECT id FROM canciones WHERE nombre = %s), NOW() );"
+        
+        cursor.execute(sql, (data['nombres'], data['nombre']))
+        
+        connect.commit()
+        print("Canción insertada en favoritos exitosamente")
+        connect.close()
+        return cursor.lastrowid
+    
+    except Error as e:
+        print("Error al insertar canción en favoritos en MySQL", e)
+        return None
+    
+    finally:
+        if connect.is_connected():
+            connect.close()
+            cursor.close()
+
+## Eliminar una canción de la playlist de favoritos
+def deletefavoritesong(data):
+
+    connect = conection.conectar()
+    
+    try:
+        cursor = connect.cursor()
+
+        sql = "DELETE FROM favoritos WHERE usuario_id = (SELECT id FROM usuarios WHERE nombres = %s) AND cancion_id = (SELECT id FROM canciones WHERE nombre = %s);"
+        
+        cursor.execute(sql, (data['nombres'], data['nombre']))
+        
+        connect.commit()
+        print("Canción eliminada de favoritos exitosamente")
+        connect.close()
+        return cursor.lastrowid
+    
+    except Error as e:
+        print("Error al eliminar canción de favoritos en MySQL", e)
+        return None
+    
+    finally:
+        if connect.is_connected():
+            connect.close()
+            cursor.close()
+
+## Listar todas las canciones de la playlist de favoritos de un usuario
+def listfavoritesongs(data):
+
+    connect = conection.conectar()
+    
+    try:
+        cursor = connect.cursor()
+
+        sql = "SELECT c.nombre, c.fotografia_url, c.duracion, c.artista, c.archivo_mp3_url, c.fecha_subida FROM favoritos f JOIN canciones c ON f.cancion_id = c.id WHERE f.usuario_id = (SELECT id FROM usuarios WHERE nombres = %s);"
+        
+        cursor.execute(sql, (data['nombres'],))
+        
+        result = cursor.fetchall()
+        print("Canciones de favoritos listadas exitosamente")
+        connect.close()
+
+        response = []
+        for row in result:
+            response.append({
+                "nombre": row[0],
+                "fotografia_url": row[1],
+                "duracion": str(row[2]),
+                "artista": row[3],
+                "archivo_mp3_url": row[4],
+                "fecha_subida": str(row[5])
+            })
+        return response
+    
+    except Error as e:
+        print("Error al listar canciones de favoritos en MySQL", e)
+        return None
+    
+    finally:
+        if connect.is_connected():
+            connect.close()
+            cursor.close()
