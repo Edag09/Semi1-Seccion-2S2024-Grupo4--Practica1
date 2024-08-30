@@ -300,7 +300,7 @@ router.delete('/removesong', (req, res) => {
     });
 });
 
-router.get('/favorite', (req, res) => {
+router.get('/listfavorite', (req, res) => {
     const { userId } = req.query;
     if (!userId) {
         return res.status(400).json({ message: 'Faltan datos obligatorios', code: 400 });
@@ -316,6 +316,164 @@ router.get('/favorite', (req, res) => {
             return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
         }
         return res.status(200).json({ favorites: results, code: 200 });
+    });
+});
+
+//Endpoint de Playlist
+router.post('/createplaylist', (req, res) => {
+    const { name, description, coverUrl, userId, creationDate } = req.body;
+    if (!name || !description || !coverUrl || !userId || !creationDate) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios para crear la playlist', code: 400 });
+    }
+    const query = 'INSERT INTO playlists (nombre, descripcion, fondo_portada_url, usuario_id, fecha_creacion) VALUES (?, ?, ?, ?, ?)';
+    mysqlConnection.query(query, [name, description, coverUrl, userId, creationDate], (err, results) => {
+        if (err) {
+            console.error('Error al ejecutar la consulta:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        return res.status(200).json({ message: 'Playlist creada exitosamente', code: 200, playlistId: results.insertId });
+    });
+});
+
+router.get('/playlist', (req, res) => {
+    const { userId } = req.query;
+    if (!userId) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios: userId', code: 400 });
+    }
+    const query = 'SELECT * FROM playlists WHERE usuario_id = ?';
+    mysqlConnection.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error al ejecutar la consulta:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        if (results.length > 0) {
+            return res.status(200).json({ playlists: results });
+        } else {
+            return res.status(404).json({ message: 'No se encontraron playlists para este usuario', code: 404 });
+        }
+    });
+});
+
+router.delete('/deleteplaylist', (req, res) => {
+    const { playlistId, userId } = req.body;
+    if (!playlistId || !userId) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios: playlistId o userId', code: 400 });
+    }
+    const deleteQuery = 'DELETE FROM playlists WHERE id = ? AND usuario_id = ?';
+    mysqlConnection.query(deleteQuery, [playlistId, userId], (err, results) => {
+        if (err) {
+            console.error('Error al ejecutar la consulta:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        if (results.affectedRows > 0) {
+            return res.status(200).json({ message: 'Playlist eliminada exitosamente', code: 200 });
+        } else {
+            return res.status(404).json({ message: 'Playlist no encontrada o el usuario no tiene permiso para eliminarla', code: 404 });
+        }
+    });
+});
+
+router.put('/updateplaylist', (req, res) => {
+    const { playlistId, userId, name, description, coverImageUrl } = req.body;
+    if (!playlistId || !userId || !name || !description || !coverImageUrl) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios: playlistId, userId, name, description, o coverImageUrl', code: 400 });
+    }
+    const updateQuery = `
+        UPDATE playlists 
+        SET nombre = ?, descripcion = ?, fondo_portada_url = ?
+        WHERE id = ? AND usuario_id = ?
+    `;
+    mysqlConnection.query(updateQuery, [name, description, coverImageUrl, playlistId, userId], (err, results) => {
+        if (err) {
+            console.error('Error al ejecutar la consulta:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        if (results.affectedRows > 0) {
+            return res.status(200).json({ message: 'Playlist actualizada exitosamente', code: 200 });
+        } else {
+            return res.status(404).json({ message: 'Playlist no encontrada o el usuario no tiene permiso para actualizarla', code: 404 });
+        }
+    });
+});
+
+router.post('/addsong', (req, res) => {
+    const { playlistId, songId, addedDate } = req.body;
+    if (!playlistId || !songId || !addedDate) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios: playlistId, songId, o addedDate', code: 400 });
+    }
+    const checkPlaylistQuery = 'SELECT * FROM playlists WHERE id = ?';
+    mysqlConnection.query(checkPlaylistQuery, [playlistId], (err, playlistResults) => {
+        if (err) {
+            console.error('Error al verificar la playlist:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        if (playlistResults.length === 0) {
+            return res.status(404).json({ message: 'Playlist no encontrada', code: 404 });
+        }
+        const checkSongQuery = 'SELECT * FROM canciones WHERE id = ?';
+        mysqlConnection.query(checkSongQuery, [songId], (err, songResults) => {
+            if (err) {
+                console.error('Error al verificar la canción:', err);
+                return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+            }
+            if (songResults.length === 0) {
+                return res.status(404).json({ message: 'Canción no encontrada', code: 404 });
+            }
+            const addSongQuery = `
+                INSERT INTO playlist_canciones (playlist_id, cancion_id, fecha_agregada)
+                VALUES (?, ?, ?)
+            `;
+            mysqlConnection.query(addSongQuery, [playlistId, songId, addedDate], (err, results) => {
+                if (err) {
+                    console.error('Error al agregar la canción a la playlist:', err);
+                    return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+                }
+                return res.status(200).json({ message: 'Canción agregada a la playlist exitosamente', code: 200 });
+            });
+        });
+    });
+});
+
+router.get('/playlistsongs', (req, res) => {
+    const { playlistId } = req.query;
+    if (!playlistId) {
+        return res.status(400).json({ message: 'Falta el playlistId en los parámetros de la solicitud', code: 400 });
+    }
+    const query = `
+        SELECT c.id, c.nombre, c.fotografia_url, c.duracion, c.artista, c.archivo_mp3_url, c.fecha_subida
+        FROM canciones c
+        INNER JOIN playlist_canciones pc ON c.id = pc.cancion_id
+        WHERE pc.playlist_id = ?
+    `;
+    mysqlConnection.query(query, [playlistId], (err, results) => {
+        if (err) {
+            console.error('Error al ejecutar la consulta:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        if (results.length > 0) {
+            return res.status(200).json({ message: 'Canciones obtenidas exitosamente', code: 200, songs: results });
+        } else {
+            return res.status(404).json({ message: 'No se encontraron canciones en la playlist', code: 404 });
+        }
+    });
+});
+
+router.delete('/removesongplaylist', (req, res) => {
+    const { playlistId, songId } = req.body;
+    if (!playlistId || !songId) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios', code: 400 });
+    }
+    const query = 'DELETE FROM playlist_canciones WHERE playlist_id = ? AND cancion_id = ?';
+    mysqlConnection.query(query, [playlistId, songId], (err, results) => {
+        if (err) {
+            console.error('Error al ejecutar la consulta:', err);
+            return res.status(500).json({ message: 'Error interno del servidor', code: 500 });
+        }
+        if (results.affectedRows > 0) {
+            return res.status(200).json({ message: 'Canción eliminada de la playlist exitosamente', code: 200 });
+        } else {
+            return res.status(404).json({ message: 'Canción no encontrada en la playlist', code: 404 });
+        }
     });
 });
 
