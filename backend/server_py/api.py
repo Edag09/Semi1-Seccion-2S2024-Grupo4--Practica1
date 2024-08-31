@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 import users as users
 import song as songs
+import playlist as playlists
 
 app = Flask(__name__)
 
@@ -194,7 +195,7 @@ def add_favorite():
     data = request.get_json()
 
     # Validar que todos los campos están presentes
-    required_fields = ['nombres', 'nombre']
+    required_fields = ['correo_electronico', 'nombre']
     
     for field in required_fields:
         if field not in data:
@@ -216,7 +217,7 @@ def delete_favorite():
     data = request.get_json()
 
     # Validar que todos los campos están presentes
-    required_fields = ['nombres', 'nombre']
+    required_fields = ['correo_electronico', 'nombre']
     
     for field in required_fields:
         if field not in data:
@@ -238,7 +239,7 @@ def list_favorite():
     data = request.get_json()
 
     # Validar que todos los campos están presentes
-    required_fields = ['nombres']
+    required_fields = ['correo_electronico']
     
     for field in required_fields:
         if field not in data:
@@ -251,6 +252,117 @@ def list_favorite():
     return jsonify({
         "message": "Canciones de favoritos listadas exitosamente",
         "data": result
+    }), 200
+
+### Ruta para las playlist
+## Ruta para listar todas las playlists
+@app.route('/playlists', methods=['GET'])
+def get_playlists():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['correo_electronico']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    result = playlists.getplaylists(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Playlists listadas exitosamente",
+        "data": result
+    }), 200
+
+# Ruta para crear una playlist
+@app.route('/createplaylist', methods=['POST'])
+def create_playlist():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['nombre', 'descripcion', 'fondo_portada_url', 'correo_electronico', 'fecha_creacion']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    playlists.createplaylist(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Playlist creada exitosamente",
+        "data": data
+    }), 201
+
+# Ruta para eliminar una playlist
+@app.route('/deleteplaylist', methods=['DELETE'])
+def delete_playlist():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['nombre', 'correo_electronico']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    playlists.deleteplaylist(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Playlist eliminada exitosamente",
+        "data": data
+    }), 200
+
+# Ruta para agregar una canción a una playlist
+@app.route('/addsong', methods=['POST'])
+def add_song_to_playlist():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['playlist', 'cancion', 'correo_electronico']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    playlists.addsongtoplaylist(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Canción añadida a playlist exitosamente",
+        "data": data
+    }), 200
+
+# Ruta para eliminar una canción de una playlist
+@app.route('/removesong', methods=['DELETE'])
+def delete_song_from_playlist():
+    # Obtener el JSON de la solicitud
+    data = request.get_json()
+
+    # Validar que todos los campos están presentes
+    required_fields = ['playlist', 'cancion', 'correo_electronico']
+    
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"El campo '{field}' es requerido."}), 400
+
+    # Procesar los datos (aquí simplemente los imprimimos)
+    playlists.deletesongfromplaylist(data)
+
+    # Retornar una respuesta exitosa
+    return jsonify({
+        "message": "Canción eliminada de playlist exitosamente",
+        "data": data
     }), 200
 
 if __name__ == "__main__":

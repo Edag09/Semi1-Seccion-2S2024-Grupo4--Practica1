@@ -131,9 +131,9 @@ def insertfavoritesong(data):
     try:
         cursor = connect.cursor()
 
-        sql = "INSERT INTO favoritos (usuario_id, cancion_id, fecha_agregada) VALUES ( (SELECT id FROM usuarios WHERE nombres = %s), (SELECT id FROM canciones WHERE nombre = %s), NOW() );"
+        sql = "INSERT INTO favoritos (usuario_id, cancion_id, fecha_agregada) VALUES ( (SELECT id FROM usuarios WHERE correo_electronico = %s), (SELECT id FROM canciones WHERE nombre = %s), NOW() );"
         
-        cursor.execute(sql, (data['nombres'], data['nombre']))
+        cursor.execute(sql, (data['correo_electronico'], data['nombre']))
         
         connect.commit()
         print("Canción insertada en favoritos exitosamente")
@@ -157,9 +157,9 @@ def deletefavoritesong(data):
     try:
         cursor = connect.cursor()
 
-        sql = "DELETE FROM favoritos WHERE usuario_id = (SELECT id FROM usuarios WHERE nombres = %s) AND cancion_id = (SELECT id FROM canciones WHERE nombre = %s);"
+        sql = "DELETE FROM favoritos WHERE usuario_id = (SELECT id FROM usuarios WHERE correo_electronico = %s) AND cancion_id = (SELECT id FROM canciones WHERE nombre = %s);"
         
-        cursor.execute(sql, (data['nombres'], data['nombre']))
+        cursor.execute(sql, (data['correo_electronico'], data['nombre']))
         
         connect.commit()
         print("Canción eliminada de favoritos exitosamente")
@@ -183,9 +183,9 @@ def listfavoritesongs(data):
     try:
         cursor = connect.cursor()
 
-        sql = "SELECT c.nombre, c.fotografia_url, c.duracion, c.artista, c.archivo_mp3_url, c.fecha_subida FROM favoritos f JOIN canciones c ON f.cancion_id = c.id WHERE f.usuario_id = (SELECT id FROM usuarios WHERE nombres = %s);"
+        sql = "SELECT c.nombre, c.fotografia_url, c.duracion, c.artista, c.archivo_mp3_url, c.fecha_subida FROM favoritos f JOIN canciones c ON f.cancion_id = c.id WHERE f.usuario_id = (SELECT id FROM usuarios WHERE correo_electronico = %s);"
         
-        cursor.execute(sql, (data['nombres'],))
+        cursor.execute(sql, (data['correo_electronico'],))
         
         result = cursor.fetchall()
         print("Canciones de favoritos listadas exitosamente")
