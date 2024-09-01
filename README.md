@@ -12,6 +12,8 @@
 
 - Endpoint eliminar usuario (/deleteuser) - Metodo: delete
 
+- Endpoint muestra informacion (/userinfo) - Metodo get
+
 ### Endpoint de Canciones
 
 - Endpoint Buscar cancion (/searchsong) - Metodo: post
@@ -30,6 +32,8 @@
 
 - endpoint quitar favorito (/removesong) - Metodo: delete
 
+- endpoint lista favoritos (/listfavorite) - Metodo: get
+
 ### Enpoint de Playlist
 
 - Endpoint Lista de playlist (/playlist) - Metodo: get
@@ -38,6 +42,10 @@
 
 - Endpoint eliminar playlist (/deleteplaylist) - Metodo: delete
 
+- Endpoint actualizar playlist (/updateplaylist) - Metodo: put
+
 - Enpoint agregar cancion (/addsong) - Metodo: get
 
-- Endpoint quitar cancion (/removesong) - Metodo: delete
+- Endpoint quitar cancion (/removesongplaylist) - Metodo: delete
+
+- Endpoint listar canciones (/playlistsongs) - Metodo: get
