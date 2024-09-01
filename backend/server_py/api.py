@@ -48,9 +48,10 @@ def login():
 
     # Procesar los datos (aquí simplemente los imprimimos)
     result = users.loginuser(data)
-
+    print(result)
     # Retornar una respuesta exitosa
     if result is not None:
+       
         # Verifica si el usuario existe
         return jsonify({
             "message": "Inicio de sesión exitoso",

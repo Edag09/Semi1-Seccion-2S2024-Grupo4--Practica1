@@ -9,12 +9,12 @@ router.get("/", (req, res) => {
 
 //Endpoint de Usuarios
 router.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Faltan datos del login", code: 400 });
-  }
+  // const { email, password } = req.body;
+  // if (!email || !password) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "Faltan datos del login", code: 400 });
+  // }
   const query =
     "SELECT * FROM usuarios WHERE correo_electronico = ? AND contrasena = ?";
   mysqlConnection.query(query, [email, password], (err, results) => {
