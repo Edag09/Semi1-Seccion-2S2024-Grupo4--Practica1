@@ -3,7 +3,7 @@ const router = express.Router();
 const mysqlConnection = require("../database");
 
 //Endpoint de Usuarios
-router.post("/", (req, res) => {
+router.get("/", (req, res) => {
   res.status(200).send("OK");
 });
 
@@ -55,12 +55,10 @@ router.post("/createuser", (req, res) => {
     !role ||
     !creationDate
   ) {
-    return res
-      .status(400)
-      .json({
-        message: "Faltan datos obligatorios para crear el usuario",
-        code: 400,
-      });
+    return res.status(400).json({
+      message: "Faltan datos obligatorios para crear el usuario",
+      code: 400,
+    });
   }
   const checkEmailQuery = "SELECT * FROM usuarios WHERE correo_electronico = ?";
   mysqlConnection.query(checkEmailQuery, [email], (err, results) => {
@@ -71,12 +69,10 @@ router.post("/createuser", (req, res) => {
         .json({ message: "Error interno del servidor", code: 500 });
     }
     if (results.length > 0) {
-      return res
-        .status(412)
-        .json({
-          message: "El correo electrónico ya está registrado",
-          code: 412,
-        });
+      return res.status(412).json({
+        message: "El correo electrónico ya está registrado",
+        code: 412,
+      });
     }
     const query =
       "INSERT INTO usuarios (nombres, apellidos, foto_url, correo_electronico, contrasena, fecha_nacimiento, rol, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -99,13 +95,11 @@ router.post("/createuser", (req, res) => {
             .status(500)
             .json({ message: "Error interno del servidor", code: 500 });
         }
-        return res
-          .status(200)
-          .json({
-            message: "Usuario creado exitosamente",
-            code: 200,
-            userId: results.insertId,
-          });
+        return res.status(200).json({
+          message: "Usuario creado exitosamente",
+          code: 200,
+          userId: results.insertId,
+        });
       }
     );
   });
@@ -175,12 +169,10 @@ router.put("/modifyuser", (req, res) => {
               .status(500)
               .json({ message: "Error interno del servidor", code: 500 });
           }
-          return res
-            .status(200)
-            .json({
-              message: "Datos del usuario actualizados exitosamente",
-              code: 200,
-            });
+          return res.status(200).json({
+            message: "Datos del usuario actualizados exitosamente",
+            code: 200,
+          });
         }
       );
     } else {
@@ -251,12 +243,10 @@ router.post("/createsong", (req, res) => {
     !mp3FileUrl ||
     !uploadDate
   ) {
-    return res
-      .status(400)
-      .json({
-        message: "Faltan datos obligatorios para crear la cancion",
-        code: 400,
-      });
+    return res.status(400).json({
+      message: "Faltan datos obligatorios para crear la cancion",
+      code: 400,
+    });
   }
   const query =
     "INSERT INTO canciones (nombre, fotografia_url, duracion, artista, archivo_mp3_url, fecha_subida) VALUES (?, ?, ?, ?, ?, ?)";
@@ -270,13 +260,11 @@ router.post("/createsong", (req, res) => {
           .status(500)
           .json({ message: "Error interno del servidor", code: 500 });
       }
-      return res
-        .status(200)
-        .json({
-          message: "Cancion creada exitosamente",
-          code: 200,
-          songId: results.insertId,
-        });
+      return res.status(200).json({
+        message: "Cancion creada exitosamente",
+        code: 200,
+        songId: results.insertId,
+      });
     }
   );
 });
@@ -284,13 +272,11 @@ router.post("/createsong", (req, res) => {
 router.get("/searchsong", (req, res) => {
   const { nameSong, artist } = req.query;
   if (!nameSong && !artist) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Debe proporcionar el nombre de la canción o el nombre del artista para buscar",
-        code: 400,
-      });
+    return res.status(400).json({
+      message:
+        "Debe proporcionar el nombre de la canción o el nombre del artista para buscar",
+      code: 400,
+    });
   }
   let query = "SELECT * FROM canciones WHERE";
   let queryParams = [];
@@ -313,13 +299,11 @@ router.get("/searchsong", (req, res) => {
     if (results.length > 0) {
       return res.status(200).json({ songs: results, code: 200 });
     } else {
-      return res
-        .status(404)
-        .json({
-          message:
-            "No se encontraron canciones que coincidan con los criterios de búsqueda",
-          code: 404,
-        });
+      return res.status(404).json({
+        message:
+          "No se encontraron canciones que coincidan con los criterios de búsqueda",
+        code: 404,
+      });
     }
   });
 });
@@ -448,13 +432,11 @@ router.post("/addfavorite", (req, res) => {
         .status(500)
         .json({ message: "Error interno del servidor", code: 500 });
     }
-    return res
-      .status(200)
-      .json({
-        message: "Favorito agregado exitosamente",
-        code: 200,
-        favoriteId: results.insertId,
-      });
+    return res.status(200).json({
+      message: "Favorito agregado exitosamente",
+      code: 200,
+      favoriteId: results.insertId,
+    });
   });
 });
 
@@ -512,12 +494,10 @@ router.get("/listfavorite", (req, res) => {
 router.post("/createplaylist", (req, res) => {
   const { name, description, coverUrl, userId, creationDate } = req.body;
   if (!name || !description || !coverUrl || !userId || !creationDate) {
-    return res
-      .status(400)
-      .json({
-        message: "Faltan datos obligatorios para crear la playlist",
-        code: 400,
-      });
+    return res.status(400).json({
+      message: "Faltan datos obligatorios para crear la playlist",
+      code: 400,
+    });
   }
   const query =
     "INSERT INTO playlists (nombre, descripcion, fondo_portada_url, usuario_id, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
@@ -531,13 +511,11 @@ router.post("/createplaylist", (req, res) => {
           .status(500)
           .json({ message: "Error interno del servidor", code: 500 });
       }
-      return res
-        .status(200)
-        .json({
-          message: "Playlist creada exitosamente",
-          code: 200,
-          playlistId: results.insertId,
-        });
+      return res.status(200).json({
+        message: "Playlist creada exitosamente",
+        code: 200,
+        playlistId: results.insertId,
+      });
     }
   );
 });
@@ -560,12 +538,10 @@ router.get("/playlist", (req, res) => {
     if (results.length > 0) {
       return res.status(200).json({ playlists: results });
     } else {
-      return res
-        .status(404)
-        .json({
-          message: "No se encontraron playlists para este usuario",
-          code: 404,
-        });
+      return res.status(404).json({
+        message: "No se encontraron playlists para este usuario",
+        code: 404,
+      });
     }
   });
 });
@@ -573,12 +549,10 @@ router.get("/playlist", (req, res) => {
 router.delete("/deleteplaylist", (req, res) => {
   const { playlistId, userId } = req.body;
   if (!playlistId || !userId) {
-    return res
-      .status(400)
-      .json({
-        message: "Faltan datos obligatorios: playlistId o userId",
-        code: 400,
-      });
+    return res.status(400).json({
+      message: "Faltan datos obligatorios: playlistId o userId",
+      code: 400,
+    });
   }
   const deleteQuery = "DELETE FROM playlists WHERE id = ? AND usuario_id = ?";
   mysqlConnection.query(deleteQuery, [playlistId, userId], (err, results) => {
@@ -593,13 +567,11 @@ router.delete("/deleteplaylist", (req, res) => {
         .status(200)
         .json({ message: "Playlist eliminada exitosamente", code: 200 });
     } else {
-      return res
-        .status(404)
-        .json({
-          message:
-            "Playlist no encontrada o el usuario no tiene permiso para eliminarla",
-          code: 404,
-        });
+      return res.status(404).json({
+        message:
+          "Playlist no encontrada o el usuario no tiene permiso para eliminarla",
+        code: 404,
+      });
     }
   });
 });
@@ -607,13 +579,11 @@ router.delete("/deleteplaylist", (req, res) => {
 router.put("/updateplaylist", (req, res) => {
   const { playlistId, userId, name, description, coverImageUrl } = req.body;
   if (!playlistId || !userId || !name || !description || !coverImageUrl) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Faltan datos obligatorios: playlistId, userId, name, description, o coverImageUrl",
-        code: 400,
-      });
+    return res.status(400).json({
+      message:
+        "Faltan datos obligatorios: playlistId, userId, name, description, o coverImageUrl",
+      code: 400,
+    });
   }
   const updateQuery = `
         UPDATE playlists 
@@ -635,13 +605,11 @@ router.put("/updateplaylist", (req, res) => {
           .status(200)
           .json({ message: "Playlist actualizada exitosamente", code: 200 });
       } else {
-        return res
-          .status(404)
-          .json({
-            message:
-              "Playlist no encontrada o el usuario no tiene permiso para actualizarla",
-            code: 404,
-          });
+        return res.status(404).json({
+          message:
+            "Playlist no encontrada o el usuario no tiene permiso para actualizarla",
+          code: 404,
+        });
       }
     }
   );
@@ -650,12 +618,10 @@ router.put("/updateplaylist", (req, res) => {
 router.post("/addsong", (req, res) => {
   const { playlistId, songId, addedDate } = req.body;
   if (!playlistId || !songId || !addedDate) {
-    return res
-      .status(400)
-      .json({
-        message: "Faltan datos obligatorios: playlistId, songId, o addedDate",
-        code: 400,
-      });
+    return res.status(400).json({
+      message: "Faltan datos obligatorios: playlistId, songId, o addedDate",
+      code: 400,
+    });
   }
   const checkPlaylistQuery = "SELECT * FROM playlists WHERE id = ?";
   mysqlConnection.query(
@@ -700,12 +666,10 @@ router.post("/addsong", (req, res) => {
                 .status(500)
                 .json({ message: "Error interno del servidor", code: 500 });
             }
-            return res
-              .status(200)
-              .json({
-                message: "Canción agregada a la playlist exitosamente",
-                code: 200,
-              });
+            return res.status(200).json({
+              message: "Canción agregada a la playlist exitosamente",
+              code: 200,
+            });
           }
         );
       });
@@ -716,12 +680,10 @@ router.post("/addsong", (req, res) => {
 router.get("/playlistsongs", (req, res) => {
   const { playlistId } = req.query;
   if (!playlistId) {
-    return res
-      .status(400)
-      .json({
-        message: "Falta el playlistId en los parámetros de la solicitud",
-        code: 400,
-      });
+    return res.status(400).json({
+      message: "Falta el playlistId en los parámetros de la solicitud",
+      code: 400,
+    });
   }
   const query = `
         SELECT c.id, c.nombre, c.fotografia_url, c.duracion, c.artista, c.archivo_mp3_url, c.fecha_subida
@@ -737,20 +699,16 @@ router.get("/playlistsongs", (req, res) => {
         .json({ message: "Error interno del servidor", code: 500 });
     }
     if (results.length > 0) {
-      return res
-        .status(200)
-        .json({
-          message: "Canciones obtenidas exitosamente",
-          code: 200,
-          songs: results,
-        });
+      return res.status(200).json({
+        message: "Canciones obtenidas exitosamente",
+        code: 200,
+        songs: results,
+      });
     } else {
-      return res
-        .status(404)
-        .json({
-          message: "No se encontraron canciones en la playlist",
-          code: 404,
-        });
+      return res.status(404).json({
+        message: "No se encontraron canciones en la playlist",
+        code: 404,
+      });
     }
   });
 });
@@ -772,12 +730,10 @@ router.delete("/removesongplaylist", (req, res) => {
         .json({ message: "Error interno del servidor", code: 500 });
     }
     if (results.affectedRows > 0) {
-      return res
-        .status(200)
-        .json({
-          message: "Canción eliminada de la playlist exitosamente",
-          code: 200,
-        });
+      return res.status(200).json({
+        message: "Canción eliminada de la playlist exitosamente",
+        code: 200,
+      });
     } else {
       return res
         .status(404)
