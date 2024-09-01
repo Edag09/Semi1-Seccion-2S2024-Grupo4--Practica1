@@ -6,11 +6,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - SoundStream</title>
     <link rel="stylesheet" href="register.css">
+    <script>
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const formData = new FormData(document.querySelector('form'));
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirm_password');
+            
+            if (password !== confirmPassword) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+
+            // Subir la foto a un servidor o almacenamiento y obtener la URL
+            const photoFile = formData.get('photo');
+            let photoUrl = '';
+
+            if (photoFile) {
+                // Ejemplo de cómo podrías subir la foto a un servidor (esto es solo una simulación)
+                const photoUploadResponse = await fetch('http://localhost:5000/upload', {
+                    method: 'POST',
+                    body: photoFile,
+                });
+
+                const photoUploadResult = await photoUploadResponse.json();
+                photoUrl = photoUploadResult.url; // Suponiendo que el servidor devuelve una URL de la foto
+            }
+
+            const data = {
+                nombres: formData.get('first_name'),
+                apellidos: formData.get('last_name'),
+                foto_url: photoUrl,
+                correo_electronico: email,
+                contrasena: password,
+                fecha_nacimiento: formData.get('birthdate'),
+                rol: 'usuario', // Ajusta el rol según tu lógica
+                fecha_creacion: new Date().toISOString() // Fecha actual en formato ISO
+            };
+
+            const response = await fetch('http://localhost:5000/createuser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                window.location.href = 'index.html'; // Redirigir al inicio de sesión o página deseada
+            } else {
+                alert('Error al registrar el usuario');
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="register-container">
         <h2>Crear Cuenta</h2>
-        <form action="index.html" method="POST" enctype="multipart/form-data">
+        <form id="registerForm">
             <div class="input-group">
                 <label for="first-name">Nombres</label>
                 <input type="text" id="first-name" name="first_name" placeholder="Ingresa tus nombres" required>
@@ -39,7 +96,7 @@
                 <label for="birthdate">Fecha de Nacimiento</label>
                 <input type="date" id="birthdate" name="birthdate" required>
             </div>
-            <button type="submit">Registrar</button>
+            <button type="submit" onclick="handleRegister(event)">Registrar</button>
             <p class="login-link">¿Ya tienes una cuenta? <a href="index.html">Inicia sesión aquí</a></p>
         </form>
     </div>

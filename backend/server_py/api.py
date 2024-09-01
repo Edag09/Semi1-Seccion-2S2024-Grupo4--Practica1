@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from datetime import datetime
 import users as users
 import song as songs
 import playlist as playlists
 
 app = Flask(__name__)
+CORS(app)
 
 ## Ruta para crear un usuario
 @app.route('/createuser', methods=['POST'])
@@ -48,10 +50,19 @@ def login():
     result = users.loginuser(data)
 
     # Retornar una respuesta exitosa
-    return jsonify({
-        "message": "Inicio de sesión exitoso",
-        "data": result
-    }), 200
+    if result is not None:
+        # Verifica si el usuario existe
+        return jsonify({
+            "message": "Inicio de sesión exitoso",
+            "data": result,
+            "success": True
+        }), 200
+    else:
+        # Verifica si hubo un error en la conexión o si el usuario no existe
+        return jsonify({
+            "message": "Correo o contraseña incorrectos",
+            "success": False
+        }), 400
 
 ## Ruta para actualizar un usuario
 @app.route('/updateuser', methods=['PUT'])
