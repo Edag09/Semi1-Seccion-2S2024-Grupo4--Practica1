@@ -277,6 +277,20 @@ def get_playlists():
         "data": result
     }), 200
 
+@app.route('/', methods=['GET'])
+def home():
+    # Simulamos que 'data' es la información que recibimos en la solicitud
+    data = request.get_json()  # Suponiendo que el cliente envía datos JSON en la solicitud
+    
+    # Aquí iría la lógica para crear la playlist
+
+    # Respuesta JSON con mensaje y datos
+    response = {
+        "message": "Playlist creada exitosamente",
+        "data": data
+    }
+    return jsonify(response), 200
+
 # Ruta para crear una playlist
 @app.route('/createplaylist', methods=['POST'])
 def create_playlist():
