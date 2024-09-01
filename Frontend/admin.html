@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Administrador - SoundStream</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Barra de Navegación -->
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#buscar">Buscar</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="#playlist">Playlist</a></li>
+                <li><a href="#favoritos">Favoritos</a></li>
+                <li><a href="#radio">Radio</a></li>
+                <li><a href="admin.html" class="active">Administrador</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Sección del Administrador -->
+    <main id="administrador">
+        <h2>Panel del Administrador</h2>
+        <!-- Botón que redirige a la página de agregar canción -->
+        <a href="agregar_cancion.html" class="add-button">Agregar Canción</a>
+
+        <!-- Tabla de Canciones -->
+        <table class="song-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Artista</th>
+                    <th>Duración</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Canción de Ejemplo</td>
+                    <td>Artista Ejemplo</td>
+                    <td>3:45</td>
+                    <td>
+                        <button class="edit-button">Editar</button>
+                        <button class="delete-button">Eliminar</button>
+                    </td>
+                </tr>
+                <!-- Más filas de canciones -->
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        <p>© 2024 SoundStream. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
