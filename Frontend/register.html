@@ -26,7 +26,7 @@
 
             if (photoFile) {
                 // Ejemplo de cómo podrías subir la foto a un servidor (esto es solo una simulación)
-                const photoUploadResponse = await fetch('http://localhost:5000/upload', {
+                const photoUploadResponse = await fetch('http://loadbalancerpractica-1846261280.us-east-1.elb.amazonaws.com/upload', {
                     method: 'POST',
                     body: photoFile,
                 });
@@ -46,7 +46,7 @@
                 fecha_creacion: new Date().toISOString() // Fecha actual en formato ISO
             };
 
-            const response = await fetch('http://localhost:5000/createuser', {
+            const response = await fetch('http://loadbalancerpractica-1846261280.us-east-1.elb.amazonaws.com/createuser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
