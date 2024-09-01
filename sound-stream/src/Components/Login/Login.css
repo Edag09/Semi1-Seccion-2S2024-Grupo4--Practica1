@@ -1,0 +1,58 @@
+/* Estilo para centrar el contenedor del login en la página */
+.login-container {
+    width: 300px; /* Anchura del formulario */
+    margin: 100px auto; /* Margen superior y centrar horizontalmente */
+    padding: 20px; /* Espacio interno */
+    border: 1px solid #ccc; /* Borde ligero */
+    border-radius: 8px; /* Bordes redondeados */
+    background-color: #ffffff; /* Fondo blanco */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra para efecto de profundidad */
+    text-align: center; /* Centrar texto */
+  }
+  
+  /* Estilos para los grupos de formularios */
+  .form-group {
+    margin-bottom: 15px; /* Espacio inferior entre campos */
+    text-align: left; /* Alinear texto a la izquierda */
+  }
+  
+  /* Estilo para las etiquetas */
+  .form-group label {
+    display: block; /* Mostrar como bloque */
+    margin-bottom: 5px; /* Espacio inferior */
+    font-weight: bold; /* Negrita para las etiquetas */
+  }
+  
+  /* Estilo para los campos de entrada */
+  .form-group input {
+    width: 100%; /* Ancho completo */
+    padding: 8px; /* Espacio interno */
+    box-sizing: border-box; /* Incluir padding en el ancho total */
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 4px; /* Bordes redondeados */
+  }
+  
+  /* Estilo para los mensajes de error */
+  .error-message {
+    color: red; /* Texto rojo */
+    margin-bottom: 10px; /* Espacio inferior */
+    font-size: 14px; /* Tamaño de fuente */
+  }
+  
+  /* Estilo para el botón de envío */
+  button {
+    width: 100%; /* Ancho completo */
+    padding: 10px; /* Espacio interno */
+    background-color: #007bff; /* Color de fondo azul */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    border-radius: 4px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor de mano */
+    font-size: 16px; /* Tamaño de fuente */
+  }
+  
+  /* Estilo para el botón en estado hover */
+  button:hover {
+    background-color: #0056b3; /* Azul más oscuro en hover */
+  }
+  
